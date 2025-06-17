@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Leyes de {{ current_country_name if current_country_name else "la Región" }}</h2>
+
+    {% if is_premium_user %}
+        {# Ensure form action points to current country or default if none selected #}
+        <form method="GET" action="{{ url_for('leyes', country_code=request.view_args.get('country_code') or request.args.get('country')) }}" class="form-inline mb-4">
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom:10px;">
+                <input type="text" name="search" class="form-control" placeholder="Buscar por palabra clave..." value="{{ search_term or '' }}" style="width: auto; flex-grow: 1;">
+                <select name="category" class="form-control" style="width: auto;">
+                    <option value="">Todas las Categorías</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat }}" {% if cat == category_filter %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-custom btn-sm">Buscar/Filtrar</button>
+                {% if search_term or category_filter %}
+                    <a href="{{ url_for('leyes') }}" class="btn-custom-secondary btn-sm">Limpiar</a>
+                {% endif %}
+            </div>
+        </form>
+        <p><a href="{{ url_for('mis_leyes_favoritas') }}" class="btn-custom-secondary btn-sm">Ver Mis Leyes Favoritas</a></p>
+    {% else %}
+        <p>Explora un resumen de la legislación ecuatoriana.</p>
+    {% endif %}
+
+    {% if laws_list %}
+        <div class="law-list">
+            {% for law_item in laws_list %}
+                <div class="law-card" style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h3>{{ law_item.title }}</h3>
+                    <p><strong>Categoría:</strong> {{ law_item.category if law_item.category else "No especificada" }}</p>
+
+                    {% if is_premium_user %}
+                        <p><strong>Contenido Completo:</strong><br>{{ law_item.full_content_path | safe }}</p> {# Assuming full_content_path has HTML or pre-formatted text. Use `safe` with caution. #}
+                        <form action="{{ url_for('toggle_favorite_law', law_id=law_item.id) }}" method="POST" class="favorite-form" style="display: inline-block; margin-top:10px;">
+                            {# Add CSRF token here if using Flask-WTF #}
+                            <button type="submit" class="btn-custom-secondary btn-sm">
+                                {% if law_item.id in favorite_law_ids %}
+                                    Quitar de Favoritos
+                                {% else %}
+                                    Marcar como Favorita
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% else %}
+                        <p><strong>Resumen:</strong> {{ law_item.content_summary if law_item.content_summary else "Resumen no disponible." }}</p>
+                        {% if law_item.full_content_path == '#limited' or not law_item.full_content_path %}
+                            <p><em>(Contenido completo disponible para suscriptores Premium)</em></p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay leyes disponibles para mostrar según los criterios actuales.</p>
+    {% endif %}
+
+    {% if not is_premium_user %}
+    <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+        <h4>Accede al Contenido Completo, Búsqueda Avanzada y Más Leyes</h4>
+        <p>Para acceder al texto íntegro de las leyes, utilizar filtros de búsqueda, guardar favoritos y explorar una biblioteca legal más extensa, actualiza a nuestra suscripción Premium.</p>
+        <a href="#" class="btn-custom">Actualizar a Premium</a> {# Link to future premium page #}
+    </div>
+    {% endif %}
+
+    {# Basic JS for favorite form submission - can be moved to a static JS file #}
+    {% if is_premium_user %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('.favorite-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const button = form.querySelector('button[type="submit"]');
+                    const originalButtonText = button.textContent.trim();
+                    // Optimistic update: change button text immediately
+                    if (originalButtonText.includes('Marcar')) {
+                        button.textContent = 'Procesando... (Quitar)';
+                    } else {
+                        button.textContent = 'Procesando... (Marcar)';
+                    }
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            // If you add CSRF tokens via Flask-WTF, include them here
+                            // 'X-CSRFToken': '{{ csrf_token() }}' // Example for Flask-WTF
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Update button text based on new state
+                            if (data.favorited) {
+                                button.textContent = 'Quitar de Favoritos';
+                            } else {
+                                button.textContent = 'Marcar como Favorita';
+                            }
+                            // alert(data.message); // Optional: show success message
+                        } else {
+                            button.textContent = originalButtonText; // Revert on error
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        button.textContent = originalButtonText; // Revert on error
+                        console.error('Error:', error);
+                        alert('Ocurrió un error al procesar tu solicitud: ' + error.message);
+                    });
+                });
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}

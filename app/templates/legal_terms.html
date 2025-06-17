@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Terminología Legal ({{ current_country_name if current_country_name else "la Región" }})</h2>
+
+    {% if is_premium_user %}
+    <p>Glosario completo de términos legales relevantes en Ecuador.</p>
+    {% else %}
+    <p>Un glosario básico de términos legales relevantes en Ecuador (vista limitada).</p>
+    {% endif %}
+
+    {% if terms %}
+        <div class="terms-list">
+            {% for term_item in terms %}
+                <div class="term-card" style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h4>{{ term_item.term }}</h4>
+                    <p>{{ term_item.definition }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay términos legales disponibles para mostrar en este momento.</p>
+    {% endif %}
+
+    {% if not is_premium_user %}
+    <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+        <h4>Accede al Glosario Completo</h4>
+        <p>Nuestro glosario completo incluye cientos de términos legales, explicaciones detalladas y referencias cruzadas. Actualiza a Premium para desbloquearlo.</p>
+        <a href="#" class="btn-custom">Actualizar a Premium</a> {# Link to future premium page #}
+    </div>
+    {% endif %}
+{% endblock %}

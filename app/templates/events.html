@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Conferencias y Eventos en {{ current_country_name if current_country_name else "la Región" }}</h2>
+
+    {% if is_premium_user %}
+    <p>Acceso completo a todos nuestros eventos, incluyendo contenido exclusivo y detalles adicionales.</p>
+    {% else %}
+    <p>Mantente al día con los próximos eventos legales en el país (vista limitada).</p>
+    {% endif %}
+
+
+    {% if events_list %}
+        <div class="event-list">
+            {% for event_item in events_list %}
+                <div class="event-card" style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: {% if event_item.is_premium_content %}#fff9e6{% else %}#fff{% endif %};">
+                    <h3>{{ event_item.title }} {% if event_item.is_premium_content %}<span style="font-size: 0.7em; color: #b08d57; background-color: #fff0c8; padding: 2px 5px; border-radius: 3px;">EVENTO PREMIUM</span>{% endif %}</h3>
+                    <p><strong>Fecha:</strong> {{ event_item.event_date.strftime('%Y-%m-%d %H:%M') if event_item.event_date else "Fecha no especificada" }}</p>
+                    <p><strong>Ubicación:</strong> {{ event_item.location if event_item.location else "No especificada" }}</p>
+                    <p><strong>Descripción:</strong><br>{{ event_item.description | nl2br if event_item.description else "Descripción no disponible." }}</p>
+
+                    {% if is_premium_user and event_item.exclusive_content_details %}
+                        <div style="background-color: #fdfaf2; padding:10px; margin-top:10px; border-radius: 4px;">
+                            <strong>Detalles Exclusivos (Premium):</strong><br>
+                            <p>{{ event_item.exclusive_content_details | nl2br }}</p>
+                        </div>
+                    {% elif not is_premium_user and event_item.is_premium_content %}
+                        <p><em>(Accede a todos los detalles y contenido exclusivo de este evento con nuestra suscripción Premium.)</em></p>
+                    {% elif not is_premium_user and event_item.exclusive_content_details and not event_item.is_premium_content %}
+                         <p><em>(Detalles adicionales y material exclusivo disponible para usuarios Premium)</em></p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay eventos disponibles para mostrar en este momento.</p>
+    {% endif %}
+
+    {% if not is_premium_user %}
+    <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+        <h4>Acceso Completo a Eventos y Contenido Exclusivo</h4>
+        <p>Con Premium, obtén todos los detalles de los eventos, material de conferencias (si está disponible) y acceso a eventos exclusivos para miembros.</p>
+        <a href="#" class="btn-custom">Actualizar a Premium</a> {# Link to future premium page #}
+    </div>
+    {% endif %}
+{% endblock %}

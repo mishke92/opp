@@ -1,0 +1,16 @@
+flask_session/
+*.pyc
+__pycache__/
+.env
+# Environment variables specific to a deployment (Heroku, AWS, etc.)
+# should not be committed. Use .env.example as a template.
+# instance/config.cfg # Example if using instance folder for config
+# Other sensitive files or large media files
+*.log
+*.pot
+*.py[cod]
+venv/
+.DS_Store
+# Add other files and directories that should not be committed
+# E.g. IDE specific folders like .vscode/ .idea/
+# E.g. OS specific files like Thumbs.db

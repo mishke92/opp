@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Noticias y Blog Jurídico ({{ current_country_name if current_country_name else "la Región" }})</h2>
+
+    {% if is_premium_user %}
+    <p>Acceso completo a nuestros análisis y artículos de actualidad sobre el panorama legal ecuatoriano.</p>
+    {% else %}
+    <p>Artículos de actualidad y análisis sobre el panorama legal ecuatoriano (vista previa).</p>
+    {% endif %}
+
+    {% if articles_list %}
+        <div class="article-list">
+            {% for article_item in articles_list %}
+                <div class="article-card" style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h3>{{ article_item.title }}</h3>
+                    <p><small>Publicado: {{ article_item.published_date.strftime('%Y-%m-%d') if article_item.published_date }}
+                        {% if article_item.author %} por {{ article_item.author.nombre }} {% endif %}
+                    </small></p>
+
+                    {% if is_premium_user %}
+                        <p>{{ article_item.full_content_path | nl2br if article_item.full_content_path else "Contenido completo no disponible." }}</p>
+                    {% else %}
+                        <p>{{ article_item.content_preview if article_item.content_preview else "Vista previa no disponible." }}</p>
+                        {% if article_item.full_content_path and (article_item.full_content_path.startswith('#limited') or article_item.content_preview != article_item.full_content_path) %}
+                             <a href="#">Leer más (Premium requerido)</a>
+                        {% elif article_item.full_content_path and not article_item.full_content_path.startswith('#limited') and article_item.content_preview == article_item.full_content_path %}
+                             {# Case where preview is actually full content for a short article, no "read more" needed #}
+                        {% elif article_item.full_content_path %}
+                            <a href="{{ article_item.full_content_path }}">Leer más (enlace externo/archivo)</a>
+                        {% else %}
+                            <p><em>(Artículo completo disponible para suscriptores Premium)</em></p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay artículos disponibles para mostrar en este momento.</p>
+    {% endif %}
+
+    {% if not is_premium_user %}
+    <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+        <h4>Lee Artículos Completos y Análisis Exclusivos</h4>
+        <p>Con Premium, accede a todos nuestros artículos en su totalidad, análisis profundos y contenido exclusivo de nuestros expertos.</p>
+        <a href="#" class="btn-custom">Actualizar a Premium</a> {# Link to future premium page #}
+    </div>
+    {% endif %}
+{% endblock %}

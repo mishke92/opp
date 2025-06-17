@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Agendar Cita</h2>
+
+    {% if is_premium_user %}
+        <div class="appointment-placeholder" style="padding: 20px; background-color: #e6f7ff; border: 1px solid #b3e0ff; border-radius: 5px; margin-top: 20px;">
+            <p>Bienvenido a nuestro sistema de agendamiento prioritario para usuarios Premium.</p>
+            <p>Funcionalidad de agendamiento avanzado en desarrollo. Próximamente podrás seleccionar especialistas, ver disponibilidad en tiempo real y confirmar tu cita directamente.</p>
+            <p>Por ahora, puedes <a href="{{ url_for('contacto') }}">contactarnos</a> mencionando tu estado Premium para atención prioritaria.</p>
+            {# Placeholder for actual scheduling interface #}
+            <div style="margin-top:15px;">
+                <label for="service_type">Tipo de Servicio (Ejemplo):</label>
+                <select id="service_type" name="service_type" class="form-control mb-2">
+                    <option>Consulta General</option>
+                    <option>Revisión de Contrato</option>
+                    <option>Asesoría Penal</option>
+                </select>
+                <button class="btn-custom">Buscar Disponibilidad (no funcional)</button>
+            </div>
+        </div>
+    {% else %}
+        <div class="appointment-placeholder" style="padding: 20px; background-color: #f8f9fa; border-radius: 5px; text-align: center; margin-top: 20px;">
+            <p>La funcionalidad básica para solicitar una cita estará disponible aquí.</p>
+            <p>Por ahora, por favor <a href="{{ url_for('contacto') }}">contáctanos</a> directamente para agendar una consulta.</p>
+            <p>Esta funcionalidad está en desarrollo.</p>
+        </div>
+
+        <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+            <h4>Agendamiento Prioritario y Opciones Flexibles con Premium</h4>
+            <p>Los miembros Premium tienen acceso a agendamiento prioritario, más opciones de horarios, y la posibilidad de agendar citas directamente con abogados específicos de nuestra red.</p>
+            <a href="#" class="btn-custom">Descubre Premium</a> {# Link to future premium page #}
+        </div>
+    {% endif %}
+{% endblock %}

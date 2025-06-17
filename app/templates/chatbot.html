@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if is_premium_user %}
+        <h2>Chatbot Avanzado de Asistencia Legal</h2>
+        <div class="chatbot-placeholder" style="padding: 20px; background-color: #e6f7ff; border: 1px solid #b3e0ff; border-radius: 5px; text-align: center; margin-top: 20px;">
+            <p>Bienvenido al Chatbot Avanzado.</p>
+            <p>Esta funcionalidad permitirá consultas más complejas, análisis preliminar de documentos (próximamente) y respuestas personalizadas basadas en la legislación ecuatoriana.</p>
+            <p>Funcionalidad avanzada en desarrollo.</p>
+            {# Placeholder for actual chatbot interface #}
+            <textarea style="width: 80%; min-height: 100px; margin-top:15px;" placeholder="Escribe tu consulta aquí... (interfaz no funcional)"></textarea>
+            <button class="btn-custom mt-2">Enviar (no funcional)</button>
+        </div>
+    {% else %}
+        <h2>Chatbot de Asistencia Legal Básica</h2>
+        <div class="chatbot-placeholder" style="padding: 20px; background-color: #f8f9fa; border-radius: 5px; text-align: center; margin-top: 20px;">
+            <p>Nuestro chatbot básico estará disponible aquí próximamente para responder preguntas frecuentes y ofrecer guía general.</p>
+            <p>Esta funcionalidad está en desarrollo.</p>
+        </div>
+
+        <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+            <h4>Asistencia Avanzada con Chatbot Premium</h4>
+            <p>Para un análisis más profundo de tu caso, respuestas personalizadas basadas en la legislación ecuatoriana y asistencia prioritaria, considera nuestra suscripción Premium.</p>
+            <a href="#" class="btn-custom">Descubre Premium</a> {# Link to future premium page #}
+        </div>
+    {% endif %}
+{% endblock %}

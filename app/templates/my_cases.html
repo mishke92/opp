@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Mis Casos (Ecuador)</h2>
+
+    <div class="placeholder-content" style="padding: 20px; background-color: #f8f9fa; border-radius: 5px; text-align: center; margin-top: 20px;">
+        <p>Aquí podrá consultar sus expedientes y casos activos en Ecuador.</p>
+        <p>Esta funcionalidad se encuentra actualmente en desarrollo y estará disponible próximamente para usuarios registrados.</p>
+
+        {% if not session.get('user_id') %}
+            <p class="mt-3">
+                <a href="{{ url_for('login', next=url_for('my_cases')) }}" class="btn-custom">Iniciar Sesión para ver Mis Casos</a>
+            </p>
+        {% elif session.get('user_id') and not is_premium_user %} {# Assuming a variable `is_premium_user` might be passed eventually #}
+            {# Add specific message for non-premium logged-in users if needed #}
+             <p class="mt-3">Funcionalidades avanzadas de gestión de casos estarán disponibles con Premium.</p>
+        {% endif %}
+    </div>
+
+    {# Example of what could be here for logged-in users #}
+    {% if session.get('user_id') %}
+    <div style="margin-top: 20px;">
+        <h4>Casos de Ejemplo (Placeholder):</h4>
+        <ul>
+            <li>Caso #001: Demanda Laboral - Estado: En Revisión</li>
+            <li>Caso #002: Contrato de Arrendamiento - Estado: Borrador Pendiente</li>
+        </ul>
+    </div>
+    {% endif %}
+
+{% endblock %}
