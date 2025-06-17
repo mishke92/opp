@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Abogados en {{ current_country_name if current_country_name else "la Región" }}</h2>
+
+    {% if not is_premium_user %}
+    <p>Encuentra profesionales del derecho para tus necesidades. Perfiles básicos.</p>
+    {% else %}
+    <p>Explora perfiles completos de abogados en Ecuador. Como usuario Premium, tienes acceso a información detallada.</p>
+    {% endif %}
+
+    {% if lawyers %}
+        <div class="lawyer-list">
+            {% for lawyer_profile in lawyers %}
+                <div class="lawyer-card" style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: {% if lawyer_profile.is_premium_profile %}#fff9e6{% else %}#fff{% endif %};">
+                    <h3>{{ lawyer_profile.user.nombre if lawyer_profile.user else "Nombre no disponible" }}
+                        {% if lawyer_profile.is_premium_profile %}<span style="font-size: 0.7em; color: #b08d57; background-color: #fff0c8; padding: 2px 5px; border-radius: 3px;">PERFIL PREMIUM</span>{% endif %}
+                    </h3>
+                    <p><strong>Especialización:</strong> {{ lawyer_profile.specialization if lawyer_profile.specialization else "No especificada" }}</p>
+                    <p><strong>Información de Contacto (Básica):</strong> {{ lawyer_profile.contact_info if lawyer_profile.contact_info else "No especificada" }}</p>
+
+                    {% if is_premium_user %}
+                        <p><strong>Biografía Detallada:</strong><br>{{ lawyer_profile.full_bio | nl2br if lawyer_profile.full_bio else lawyer_profile.bio if lawyer_profile.bio else "No disponible." }}</p>
+                        {% if lawyer_profile.direct_phone %}
+                            <p><strong>Teléfono Directo (Premium):</strong> {{ lawyer_profile.direct_phone }}</p>
+                        {% endif %}
+                        {% if not lawyer_profile.is_premium_profile and not is_premium_user %}
+                             <p><em>(Información adicional disponible para usuarios Premium y en perfiles Premium)</em></p>
+                        {% elif not lawyer_profile.is_premium_profile and is_premium_user %}
+                             <p><em>(Este es un perfil básico. Los perfiles Premium pueden contener más detalles.)</em></p>
+                        {% endif %}
+                    {% elif lawyer_profile.is_premium_profile %}
+                        <p><em>(Accede a la biografía completa y contacto directo con tu suscripción Premium)</em></p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay perfiles de abogados disponibles para mostrar en este momento.</p>
+    {% endif %}
+
+    {% if not is_premium_user %}
+    <div class="premium-promo" style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;">
+        <h4>Accede a Perfiles Completos y Más Abogados</h4>
+        <p>Con nuestra suscripción Premium, obtendrás acceso a biografías detalladas, contacto directo y podrás ver todos los perfiles de abogados, incluyendo los destacados como Premium.</p>
+        <a href="#" class="btn-custom">Actualizar a Premium</a> {# Link to future premium page #}
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="text-center">
+        <h1>Bienvenido al Consultorio Jurídico [Nombre del Consultorio]</h1>
+        <p class="lead mb-4">Tu acceso a la asesoría legal que necesitas en Ecuador.</p>
+
+        <div>
+            <a href="{{ url_for('register') }}" class="btn-custom">Registrarse</a>
+            <a href="{{ url_for('login') }}" class="btn-custom-secondary">Iniciar Sesión</a>
+            <a href="{{ url_for('guest_login') }}" class="btn-custom-info mt-2">Continuar como Invitado</a>
+        </div>
+    </div>
+{% endblock %}

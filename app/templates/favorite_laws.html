@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Mis Leyes Favoritas</h2>
+
+    {% if laws_list %}
+        <div class="law-list">
+            {% for law_item in laws_list %}
+                <div class="law-card" style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h3><a href="{{ url_for('leyes') }}?search={{ law_item.title }}">{{ law_item.title }}</a></h3> {# Link back to main laws page, could also be a dedicated view page #}
+                    <p><strong>Categoría:</strong> {{ law_item.category if law_item.category else "No especificada" }}</p>
+                    <p><strong>Resumen (o inicio del contenido):</strong>
+                        {{ law_item.full_content_path[:200] if law_item.full_content_path else law_item.content_summary }}...
+                    </p>
+                     <form action="{{ url_for('toggle_favorite_law', law_id=law_item.id) }}" method="POST" class="favorite-form" style="display: inline;">
+                        <button type="submit" class="btn-custom-secondary btn-sm">Quitar de Favoritos</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No has marcado ninguna ley como favorita todavía.</p>
+        <p><a href="{{ url_for('leyes') }}" class="btn-custom">Explorar Leyes</a></p>
+    {% endif %}
+
+    {# Basic JS for form submission - can be moved to a static JS file #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('.favorite-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(form);
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            // If you add CSRF tokens via Flask-WTF, include them here
+                            // 'X-CSRFToken': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Optionally, remove the item from the page or change button text
+                            alert(data.message);
+                            window.location.reload(); // Simple reload to reflect change
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Ocurrió un error al procesar tu solicitud.');
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

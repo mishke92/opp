@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Mi Perfil</h2>
+
+    {% if current_user and current_user.is_authenticated %}
+        <div class="profile-details" style="margin-bottom: 20px;">
+            <p><strong>Nombre:</strong> {{ current_user.nombre }}</p>
+            <p><strong>Email:</strong> {{ current_user.email }}</p>
+            <p><strong>Idioma de Preferencia:</strong> {{ current_user.idioma_preferido }}</p>
+            <p><strong>País de Interés:</strong> {{ current_user.pais_interes }}</p>
+        </div>
+
+        <hr>
+
+        <h3>Estado de Suscripción</h3>
+        {% set active_sub = None %}
+        {% if current_user.has_active_premium_subscription() %}
+            {% for sub in current_user.subscriptions.all() %} {# Iterate to find the specific active premium sub #}
+                {% if sub.subscription_type == 'premium' and sub.status == 'active' and (sub.end_date == None or sub.end_date >= today_date) %}
+                    {% set active_sub = sub %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if active_sub %}
+            <p><strong>Tipo de Suscripción:</strong> <span style="color: #007bff; font-weight: bold;">Premium</span></p>
+            <p><strong>Estado:</strong> Activa</p>
+            {% if active_sub.end_date %}
+            <p><strong>Válida hasta:</strong> {{ active_sub.end_date.strftime('%Y-%m-%d %H:%M:%S') }} UTC</p>
+            {% else %}
+            <p><strong>Válida hasta:</strong> Indefinido (vitalicia)</p>
+            {% endif %}
+            <form action="{{ url_for('cancel_subscription') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar tu suscripción Premium? Perderás el acceso a las funciones Premium al final del período de facturación actual.');">
+                {# Add CSRF token here if using Flask-WTF #}
+                <button type="submit" class="btn-custom-secondary btn-sm">Cancelar Suscripción</button>
+            </form>
+        {% else %}
+            <p><strong>Tipo de Suscripción:</strong> Gratuita</p>
+            <p>Aún no tienes una suscripción Premium activa.</p>
+            <a href="{{ url_for('subscription_plans') }}" class="btn-custom">Ver Planes de Suscripción</a>
+        {% endif %}
+
+    {% else %}
+        <p>Debes iniciar sesión para ver tu perfil.</p>
+        <a href="{{ url_for('login', next=url_for('my_profile')) }}" class="btn-custom">Iniciar Sesión</a>
+    {% endif %}
+{% endblock %}

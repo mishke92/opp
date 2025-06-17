@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Planes de Suscripción</h2>
+    <p>Elige el plan que mejor se adapte a tus necesidades de asesoría legal en Ecuador.</p>
+
+    <div style="display: flex; justify-content: space-around; margin-top: 30px; flex-wrap: wrap;">
+
+        {# Plan Gratuito #}
+        <div class="plan-card" style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; width: 300px; margin: 10px; text-align: center;">
+            <h3>Plan Gratuito</h3>
+            <p style="font-size: 1.5em; color: #333; margin: 10px 0;">$0<span style="font-size: 0.7em; color: #777;">/mes</span></p>
+            <ul style="list-style: none; padding: 0; text-align: left;">
+                <li>✓ Acceso a resúmenes de leyes clave.</li>
+                <li>✓ Vista previa de artículos y noticias.</li>
+                <li>✓ Glosario legal básico.</li>
+                <li>✓ Perfiles básicos de abogados.</li>
+                <li>✓ Información de eventos públicos.</li>
+                <li>✗ Búsqueda avanzada y filtros.</li>
+                <li>✗ Contenido completo de leyes y artículos.</li>
+                <li>✗ Perfiles completos de abogados.</li>
+                <li>✗ Eventos y contenido exclusivo Premium.</li>
+                <li>✗ Guardar leyes favoritas.</li>
+                <li>✗ Generador de documentos.</li>
+                <li>✗ Chatbot avanzado.</li>
+            </ul>
+            <button class="btn-custom-secondary" style="margin-top: 20px;" disabled>Tu Plan Actual (o Regístrate)</button>
+        </div>
+
+        {# Plan Premium #}
+        <div class="plan-card" style="border: 1px solid #007bff; border-radius: 8px; padding: 20px; width: 300px; margin: 10px; text-align: center; box-shadow: 0 0 15px rgba(0,123,255,0.3);">
+            <h3>Plan Premium</h3>
+            <p style="font-size: 1.5em; color: #007bff; margin: 10px 0;">$9.99<span style="font-size: 0.7em; color: #777;">/mes (Simulado)</span></p>
+            <ul style="list-style: none; padding: 0; text-align: left;">
+                <li>✓ Acceso COMPLETO a todas las leyes.</li>
+                <li>✓ Acceso COMPLETO a todos los artículos.</li>
+                <li>✓ Glosario legal COMPLETO.</li>
+                <li>✓ Perfiles COMPLETOS de abogados.</li>
+                <li>✓ Acceso a TODOS los eventos y contenido exclusivo.</li>
+                <li>✓ Búsqueda avanzada y filtros detallados.</li>
+                <li>✓ Guardar leyes favoritas.</li>
+                <li>✓ Generador de documentos básicos.</li>
+                <li>✓ Chatbot avanzado con IA (próximamente).</li>
+                <li>✓ Soporte prioritario.</li>
+            </ul>
+            {% if current_user and current_user.is_authenticated and current_user.has_active_premium_subscription() %}
+                 <button class="btn-custom" style="margin-top: 20px;" disabled>Ya eres Premium</button>
+            {% elif current_user and current_user.is_authenticated %}
+                <form action="{{ url_for('subscribe_premium') }}" method="POST">
+                    {# Add CSRF token here if using Flask-WTF #}
+                    <button type="submit" class="btn-custom" style="margin-top: 20px;">Actualizar a Premium</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login', next=url_for('subscription_plans')) }}" class="btn-custom" style="margin-top: 20px;">Iniciar Sesión para Suscribirse</a>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}

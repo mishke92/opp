@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Generador de Documentos (Ecuador)</h2>
+
+    {% if is_premium_user %}
+        <div class="generator-content" style="padding: 20px; background-color: #f8f9fa; border-radius: 5px; margin-top: 20px;">
+            <p>Bienvenido al generador de documentos básicos. Selecciona una plantilla para comenzar.</p>
+            <p>Esta funcionalidad se encuentra actualmente en desarrollo. Las plantillas listadas son ejemplos.</p>
+
+            <h4>Plantillas Disponibles (Ejemplos):</h4>
+            <ul>
+                <li>Contrato de Arrendamiento Básico (Vivienda)</li>
+                <li>Declaración Jurada Simple</li>
+                <li>Acuerdo de Confidencialidad (NDA) Básico</li>
+                <li>Notificación de Cobro Extrajudicial</li>
+            </ul>
+            <p><em>Más plantillas y personalización avanzada estarán disponibles próximamente.</em></p>
+        </div>
+    {% else %}
+        <div class="placeholder-content" style="padding: 20px; background-color: #f8f9fa; border-radius: 5px; text-align: center; margin-top: 20px;">
+            <p>El generador de documentos básicos es una herramienta exclusiva para nuestros miembros Premium.</p>
+            <p>Con esta herramienta, podrás crear borradores de documentos legales comunes de forma rápida y sencilla.</p>
+            <a href="#" class="btn-custom mt-2">Actualizar a Premium para Acceder</a> {# Link to future premium page #}
+            {% if not session.get('user_id') %}
+            <p class="mt-3">
+                <small><a href="{{ url_for('login', next=url_for('document_generator')) }}">Ya eres premium? Inicia Sesión</a></small>
+            </p>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
